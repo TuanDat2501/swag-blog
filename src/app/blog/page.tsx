@@ -1,12 +1,97 @@
 'use client'
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './style.scss';
 import '../../googleapi';
 import axios from "axios";
+import {API_KEY, BASE_URL_BLOG, BASE_URL_VIDEO} from "@/app/const/const";
+import {Simulate} from "react-dom/test-utils";
+import cheerio from "cheerio";
+import Image from "next/image";
+
+interface IBlog {
+    id: string;
+    title: string;
+    subTitle: string;
+    imageUrl: string;
+    content: string;
+    publishDate: string;
+    thumbnailUrl: any;
+    videoId: string;
+    fullContent: string;
+}
 
 const Blog = () => {
-
-
+    const blogId = "2111955837338522767";
+    const [listBlog, setListBlog] = useState<IBlog[]>()
+    const [flag, setFlag] = useState(0)
+    const [thumb, setThumb] = useState()
+    const [dataBlogs, setDataBlogs] = useState<IBlog[]>()
+    useEffect(() => {
+        axios.get(`${BASE_URL_BLOG}${blogId}/posts?key=${API_KEY}`)
+            .then((res) => {
+                setFlag(1);
+                const data = res.data.items;
+                let result = [];
+                for (let i = 0; i < data.length; i++) {
+                    let temp = {
+                        title: "",
+                        content: "",
+                        publishDate: "",
+                        id: "",
+                        thumbnailUrl: "",
+                        fullContent: "",
+                        videoId: "",
+                    } as IBlog;
+                    const cheerio = require('cheerio');
+                    const content = cheerio.load(data[i].content);
+                    const idVideo = content("iframe").attr('youtube-src-id');
+                    //get subtitle
+                    let text;
+                    if (content("div.separator").text()) {
+                        text = content("div.separator").text();
+                    } else {
+                        text = content("p").text()
+                    }
+                    const options = {month: "long", day: "numeric", year: "numeric"} as any;
+                    const date = new Date(data[i].published);
+                    const americanDate = new Intl.DateTimeFormat("en-US", options).format(date);
+                    temp.videoId = idVideo;
+                    temp.thumbnailUrl = thumb;
+                    temp.title = data[i].title;
+                    temp.content = text;
+                    temp.publishDate = americanDate;
+                    temp.id = data[i].blog.id;
+                    temp.fullContent = data[i].content;
+                    result.push(temp);
+                }
+                setListBlog(result);
+            })
+            .catch((error) => {
+                console.log(error);
+            }).finally(() => {
+        })
+    }, []);
+    useEffect(() => {
+        if (listBlog) {
+            const listIdvideo = listBlog.map((value) => value.videoId);
+            const strList = listIdvideo.join(',');
+            axios.get(`${BASE_URL_VIDEO}videos`, {
+                params: {
+                    part: "snippet,contentDetails,player",
+                    key: API_KEY,
+                    id: strList
+                }
+            }).then((res) => {
+                for (let i = 0; i < listBlog.length; i++) {
+                    listBlog[i].thumbnailUrl = res.data.items[i].snippet.thumbnails.standard.url;
+                }
+                setDataBlogs(listBlog);
+            }).catch((error) => {
+                console.log(error)
+            }).finally(() => {
+            })
+        }
+    }, [flag]);
     return (
         <>
             <div className="header-blog">
@@ -23,164 +108,45 @@ const Blog = () => {
                                                                              className="nav-link tm-category-link active">All</a>
                                 </li>
                                 <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Drone
-                                    Shots</a></li>
+                                                                             className="nav-link tm-category-link">Mouse
+                                    Farm</a></li>
                                 <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Nature</a>
+                                                                             className="nav-link tm-category-link">Nova
+                                    Trend</a>
                                 </li>
                                 <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Actions</a>
+                                                                             className="nav-link tm-category-link">We
+                                    Win New</a>
                                 </li>
                                 <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Featured</a>
+                                                                             className="nav-link tm-category-link">Swag
+                                    Lab</a>
+                                </li>
+                                <li className="nav-item tm-category-item"><a href="#"
+                                                                             className="nav-link tm-category-link">Swag
+                                    Tech</a>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div className="row tm-catalog-item-list">
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item tm-bg-gray">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-01.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <div className="content-item">
-                                <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Aenean aliquet
-                                    sapien</h3>
-                                <p className="tm-catalog-item-text">Video thumbnail has a link to another HTML page.
-                                    Categories <span className="tm-text-secondary">do not need</span> any JS.
-                                    They are just separated HTML pages. Paging is at the bottom to extend the list
-                                    as long as you want.
-                                    This can be a large catalog.</p>
+                    {dataBlogs && dataBlogs.map((value, index) =>
+                        <div key={index} className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item tm-bg-gray">
+                            <div className="position-relative tm-thumbnail-container">
+                                <img src={value.thumbnailUrl} alt="Image" className="img-fluid tm-catalog-item-img"/>
+                                <a href="video-page.html" className="position-absolute tm-img-overlay">
+                                </a>
                             </div>
-                            <text>March 15, 2022</text>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-02.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <div className="content-item">
-                                <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Mauris in odio vel
-                                    odio</h3>
-                                <p className="tm-catalog-item-text">You may need TemplateMo for a quick chat or send
-                                    an email if you have any question about this CSS template.
-                                    <span className="tm-text-secondary"> for this template.</span>
-                                </p>
+                            <div className="p-4 tm-catalog-item-description">
+                                <div className="content-item">
+                                    <h3 className="tm-text-primary mb-3 tm-catalog-item-title">{value.title}</h3>
+                                    <p className="tm-catalog-item-text">{value.content}</p>
+                                </div>
+                                <p>{value.publishDate}</p>
                             </div>
-                            <text>March 15, 2022</text>
                         </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-03.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Sagittis sodales
-                                enim</h3>
-                            <p className="tm-catalog-item-text">You are allowed to use this video catalog for
-                                your business websites.
-                                Please do not make a re-distribution of our template ZIP file on any template
-                                collection website.</p>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-04.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Nam tincidunt
-                                consectetur</h3>
-                            <p className="tm-catalog-item-text">You can apply this template for your commercial
-                                CMS theme. Nam sem leo, imperdiet non lacinia eget, volutpat ac massa. Donec
-                                mattis in velit quis commodo. Cras nec rutrum arcu.</p>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-05.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Praesent posuere
-                                rhoncus</h3>
-                            <p className="tm-catalog-item-text">Duis vulputate nisl metus, eget dapibus nunc
-                                ultricies id. Ut augue mauris, varius quis nulla non, sollicitudin consectetur
-                                nisl. Donec eget arcu placerat, ullamcorper.</p>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-06.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Turpis massa aliquam</h3>
-                            <p className="tm-catalog-item-text">Nunc neque risus, ultrices sed luctus at,
-                                iaculis at arcu. Pellentesque rutrum velit nec sapien ullamcorper ultrices.
-                                Vestibulum lectus risus, laoreet pretium ipsum</p>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-07.jpg" alt=" imga" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Class aptent taciti
-                                sociosqu</h3>
-                            <p className="tm-catalog-item-text">Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit. Phasellus bibendum orci sit amet dignissim rhoncus.
-                                Pellentesque pretium faucibus vestibulum.</p>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-08.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Donec ac nisl ul
-                                elit</h3>
-                            <p className="tm-catalog-item-text">Suspendisse in odio congue, lobortis metus sed,
-                                venenatis nisl. In dapibus et massa feugiat facilisis. Maecenas venenatis
-                                aliquet nulla, a tincidunt erat suscipit eget.</p>
-                        </div>
-                    </div>
-                    <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
-                        <div className="position-relative tm-thumbnail-container">
-                            <img src="img/tn-09.jpg" alt="Image" className="img-fluid tm-catalog-item-img"/>
-                            <a href="video-page.html" className="position-absolute tm-img-overlay">
-
-                            </a>
-                        </div>
-                        <div className="p-4 tm-catalog-item-description">
-                            <h3 className="tm-text-primary mb-3 tm-catalog-item-title">Sed mattis nisi erat</h3>
-                            <p className="tm-catalog-item-text">Integer ultricies mi eu aliquet cursus. Nam sem
-                                leo, imperdiet non lacinia eget, volutpat ac massa. Donec mattis in velit quis
-                                commodo. Cras nec rutrum arcu.</p>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <div>

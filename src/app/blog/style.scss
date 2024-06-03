@@ -21,6 +21,24 @@
   margin-top: 20px;
   .tm-catalog-item-list {
     justify-content: space-between;
+    .tm-catalog-item{
+      .tm-catalog-item-description{
+        p{
+          margin-top: 20px;
+        }
+        .content-item{
+          p{
+            margin-top: 5px;
+            margin-bottom: 5px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
+      }
+    }
   }
 
   .tm-catalog-item {

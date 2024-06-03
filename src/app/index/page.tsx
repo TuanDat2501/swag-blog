@@ -4,7 +4,7 @@ import './style.scss';
 import IPlay from "@/icon/IPlay";
 import {useRouter} from "next/navigation";
 import axios from "axios";
-import {API_KEY, BASE_URL} from "@/app/const/const";
+import {API_KEY, BASE_URL_VIDEO} from "@/app/const/const";
 
 interface IItemVideo {
     videoId: string;
@@ -58,7 +58,7 @@ const Index = () => {
         waitUntil(1.2, 200, 1);
         waitUntil(3.5, 50, 2);
         waitUntil(300, 5, 3);
-        axios.get(`${BASE_URL}activities`, {
+        axios.get(`${BASE_URL_VIDEO}activities`, {
             params: {
                 maxResults: 25,
                 channelId: channelId,
@@ -140,16 +140,22 @@ const Index = () => {
                                                                                      className="nav-link tm-category-link active">All</a>
                                         </li>
                                         <li className="nav-item tm-category-item"><a href="#"
-                                                                                     className="nav-link tm-category-link">Drone
-                                            Shots</a></li>
+                                                                                     className="nav-link tm-category-link">Mouse
+                                            Farm</a></li>
                                         <li className="nav-item tm-category-item"><a href="#"
-                                                                                     className="nav-link tm-category-link">Nature</a>
+                                                                                     className="nav-link tm-category-link">Nova
+                                            Trend</a>
                                         </li>
                                         <li className="nav-item tm-category-item"><a href="#"
-                                                                                     className="nav-link tm-category-link">Actions</a>
+                                                                                     className="nav-link tm-category-link">We
+                                            Win New</a>
                                         </li>
                                         <li className="nav-item tm-category-item"><a href="#"
-                                                                                     className="nav-link tm-category-link">Featured</a>
+                                                                                     className="nav-link tm-category-link">Swag
+                                            Lab</a>
+                                        </li>
+                                        <li className="nav-item tm-category-item"><a href="#"
+                                                                                     className="nav-link tm-category-link">Swag Tech</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -157,7 +163,7 @@ const Index = () => {
                         </div>
 
                         <div className="row tm-catalog-item-list">
-                            {listItemVideo && listItemVideo.map((video) =>
+                            {listItemVideo?.map((video) =>
                                 <>
                                     <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
                                         <div className="position-relative tm-thumbnail-container">
