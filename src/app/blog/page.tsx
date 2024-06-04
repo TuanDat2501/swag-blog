@@ -7,6 +7,9 @@ import {API_KEY, BASE_URL_BLOG, BASE_URL_VIDEO} from "@/app/const/const";
 import {Simulate} from "react-dom/test-utils";
 import cheerio from "cheerio";
 import Image from "next/image";
+import SkeletonItem from "@/component/SkeletonItem/SkeletonItem";
+import {useRouter} from "next/navigation";
+
 
 interface IBlog {
     id: string;
@@ -18,14 +21,22 @@ interface IBlog {
     thumbnailUrl: any;
     videoId: string;
     fullContent: string;
+    author:{
+        avatarUrl: string;
+        displayName: string;
+    }
 }
 
 const Blog = () => {
+    const router = useRouter();
     const blogId = "2111955837338522767";
     const [listBlog, setListBlog] = useState<IBlog[]>()
     const [flag, setFlag] = useState(0)
     const [thumb, setThumb] = useState()
     const [dataBlogs, setDataBlogs] = useState<IBlog[]>()
+    const viewBlog = (blogId:string)=>{
+        router.push(`/blog/blogId?b=${blogId}`)
+    }
     useEffect(() => {
         axios.get(`${BASE_URL_BLOG}${blogId}/posts?key=${API_KEY}`)
             .then((res) => {
@@ -41,6 +52,10 @@ const Blog = () => {
                         thumbnailUrl: "",
                         fullContent: "",
                         videoId: "",
+                        author:{
+                            avatarUrl: "",
+                            displayName: "",
+                        }
                     } as IBlog;
                     const cheerio = require('cheerio');
                     const content = cheerio.load(data[i].content);
@@ -60,8 +75,10 @@ const Blog = () => {
                     temp.title = data[i].title;
                     temp.content = text;
                     temp.publishDate = americanDate;
-                    temp.id = data[i].blog.id;
+                    temp.id = data[i].id;
                     temp.fullContent = data[i].content;
+                    temp.author.avatarUrl=data[i].author.image.url;
+                    temp.author.displayName=data[i].author.displayName;
                     result.push(temp);
                 }
                 setListBlog(result);
@@ -131,11 +148,11 @@ const Blog = () => {
                     </div>
                 </div>
                 <div className="row tm-catalog-item-list">
-                    {dataBlogs && dataBlogs.map((value, index) =>
+                    {dataBlogs ? dataBlogs.map((value, index) =>
                         <div key={index} className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item tm-bg-gray">
-                            <div className="position-relative tm-thumbnail-container">
+                            <div className="position-relative tm-thumbnail-container" >
                                 <img src={value.thumbnailUrl} alt="Image" className="img-fluid tm-catalog-item-img"/>
-                                <a href="video-page.html" className="position-absolute tm-img-overlay">
+                                <a className="position-absolute tm-img-overlay" onClick={()=>viewBlog(value.id)}>
                                 </a>
                             </div>
                             <div className="p-4 tm-catalog-item-description">
@@ -144,10 +161,22 @@ const Blog = () => {
                                     <p className="tm-catalog-item-text">{value.content}</p>
                                 </div>
                                 <p>{value.publishDate}</p>
+                                <div className="author">
+                                    <div className="avatar">
+                                        <img src={value.author.avatarUrl} alt="avarta"/>
+                                        <p>{value.author.displayName}</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    )}
+                    ) : <>
+                        <SkeletonItem></SkeletonItem>
+                        <SkeletonItem></SkeletonItem>
+                        <SkeletonItem></SkeletonItem>
+                    </>}
+
                 </div>
+
             </div>
             <div>
                 <ul className="nav tm-paging-links">

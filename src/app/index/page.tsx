@@ -5,6 +5,7 @@ import IPlay from "@/icon/IPlay";
 import {useRouter} from "next/navigation";
 import axios from "axios";
 import {API_KEY, BASE_URL_VIDEO} from "@/app/const/const";
+import SkeletonItem from "@/component/SkeletonItem/SkeletonItem";
 
 interface IItemVideo {
     videoId: string;
@@ -163,7 +164,7 @@ const Index = () => {
                         </div>
 
                         <div className="row tm-catalog-item-list">
-                            {listItemVideo?.map((video) =>
+                            {listItemVideo ? listItemVideo.map((video) =>
                                 <>
                                     <div className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item">
                                         <div className="position-relative tm-thumbnail-container">
@@ -179,7 +180,11 @@ const Index = () => {
                                         </div>
                                     </div>
                                 </>
-                            )}
+                            ) : <>
+                                <SkeletonItem></SkeletonItem>
+                                <SkeletonItem></SkeletonItem>
+                                <SkeletonItem></SkeletonItem>
+                            </>}
 
                         </div>
                         <div>

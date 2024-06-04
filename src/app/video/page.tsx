@@ -3,9 +3,12 @@ import React, {useEffect, useState} from 'react';
 import './style.scss';
 import {useSearchParams} from "next/navigation";
 import axios from "axios";
-import {API_KEY, BASE_URL_VIDEO} from "@/app/const/const";
+import {API_KEY, BASE_URL_BLOG, BASE_URL_VIDEO, BASE_URL_VIDEO1} from "@/app/const/const";
 import parse from  "html-react-parser";
 import moment from "moment/moment";
+import Image from "next/image";
+import {convertDate} from "@/app/const/helper";
+import SkeletonComment from "@/component/SkeletonComment/SkeletonComment";
 interface IItemVideo {
     videoId: string|null;
     title: string;
@@ -19,6 +22,8 @@ interface IItemVideo {
 const Video = () => {
     const params = useSearchParams();
     const [itemVideo, setItemVideo] = useState<IItemVideo>()
+    const [comments, setComments] = useState<any>(null)
+    const channelId = "UCB1mpBAGHpUHBs17UZZVeDw";
     useEffect(() => {
         axios.get(`${BASE_URL_VIDEO}videos`, {
             params: {
@@ -46,7 +51,28 @@ const Video = () => {
 
         })
     }, [params]);
+    useEffect(() => {
+        axios.get(`${BASE_URL_VIDEO1}/commentThreads`,{
+            params:{
+                part: "snippet,replies",
+                key: API_KEY,
+                videoId: params.get('videoId')
+            }
+        })
+            .then((res)=>{
+                setComments(res.data);
+            })
+            .catch((error)=>{
+                console.log(error);
+                setComments([]);
+            })
+            .finally(()=>{
 
+            })
+        return () => {
+            setComments(null);
+        }
+    }, [itemVideo]);
     return (
         <>
             <div className="header-video">
@@ -67,6 +93,47 @@ const Video = () => {
                 </div>
                 <div className="content-video-description">
                     <p>{itemVideo?.description}</p>
+                </div>
+                <div className="comments">
+                    <div className="comments-title">
+                        <h3>Comment ({comments?.items ? comments.items?.length : "0"})</h3>
+                    </div>
+                    <div className="comments-list">
+                        {
+                            comments ? comments.items?.map((comment: any) =>
+                                    <div className="comment" key={comment.id}>
+                                        <div className="avatar">
+                                            <Image width={200} height={200} quality={100}
+                                                   src={comment.snippet.topLevelComment.snippet.authorProfileImageUrl} alt="avatar"></Image>
+                                            <strong className="author"> {comment.snippet.topLevelComment.snippet.authorDisplayName}</strong>
+                                            <p className="date">{convertDate(comment.snippet.topLevelComment.snippet.publishedAt)}</p>
+                                        </div>
+                                        <div className="comment-content">
+                                            <p>{comment.snippet.topLevelComment.snippet.textOriginal}</p>
+                                        </div>
+                                        {comment.snippet.totalReplyCount > 0 &&
+                                            comment.replies.comments.map((replies: any,index:number) =>
+                                                <div className="replies" key={index}>
+                                                    <div className="avatar">
+                                                        <Image width={200} height={200} quality={100}
+                                                               src={replies.snippet.authorProfileImageUrl}
+                                                               alt="avatar"></Image>
+                                                        <strong
+                                                            className="author"> {replies.snippet.authorDisplayName}</strong>
+                                                        <p className="date">{convertDate(replies.snippet.publishedAt)}</p>
+                                                    </div>
+                                                    <div className="comment-content">
+                                                        <p>{replies.snippet.textOriginal}</p>
+                                                    </div>
+                                                </div>
+                                            )
+                                        }
+
+                                    </div>
+                                ) :
+                                <SkeletonComment></SkeletonComment>
+                        }
+                    </div>
                 </div>
             </div>
         </>

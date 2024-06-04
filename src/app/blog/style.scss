@@ -21,6 +21,7 @@
   margin-top: 20px;
   .tm-catalog-item-list {
     justify-content: space-between;
+    min-height: 500px;
     .tm-catalog-item{
       .tm-catalog-item-description{
         p{
@@ -35,6 +36,22 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
             text-overflow: ellipsis;
+          }
+        }
+        .author{
+          .avatar{
+            display: flex;
+            width: 100%;
+            gap: 5px;
+            img{
+              width: 100%;
+              max-width: 30px;
+              max-height: 30px;
+              align-self: center;
+            }
+            p{
+              font-weight: bold;
+            }
           }
         }
       }
