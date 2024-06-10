@@ -166,7 +166,7 @@ const Landing = () => {
                 </div>
                 <div id="tm-video-container">
                     <video autoPlay muted loop id="tm-video">
-                        <source src="/video/wheat-field.mp4" type="video/mp4"/>
+                        <source src="https://firebasestorage.googleapis.com/v0/b/swag-video-fcf45.appspot.com/o/img%2Fwheat-field.mp4?alt=media&token=70c271a1-af52-473d-8916-5f8ff61dac5d" type="video/mp4"/>
                     </video>
                 </div>
             </div>
