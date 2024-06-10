@@ -1,14 +1,14 @@
 'use client'
 import React, {useEffect, useState} from 'react';
 import './style.scss';
-import '../../googleapi';
 import axios from "axios";
-import {API_KEY, BASE_URL_BLOG, BASE_URL_VIDEO} from "@/app/const/const";
-import {Simulate} from "react-dom/test-utils";
-import cheerio from "cheerio";
+
 import Image from "next/image";
-import SkeletonItem from "@/component/SkeletonItem/SkeletonItem";
-import {useRouter} from "next/navigation";
+
+import {useRouter, useSearchParams} from "next/navigation";
+import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";
+import {DataChannel} from "@/app/const/interface";
+import {BASE_URL_BLOG, BASE_URL_VIDEO, DATA_CHANNEL} from "@/app/const/const";
 
 
 interface IBlog {
@@ -29,18 +29,33 @@ interface IBlog {
 
 const Blog = () => {
     const router = useRouter();
-    const blogId = "2111955837338522767";
-    const [listBlog, setListBlog] = useState<IBlog[]>()
-    const [flag, setFlag] = useState(0)
-    const [thumb, setThumb] = useState()
-    const [dataBlogs, setDataBlogs] = useState<IBlog[]>()
-    const viewBlog = (blogId:string)=>{
-        router.push(`/blog/blogId?b=${blogId}`)
+    const searchParams = useSearchParams()
+    const blogId =searchParams.get('blogId')||"2336283564104274815";
+    const channel =searchParams.get('channel');
+    console.log(channel);
+    const [listBlog, setListBlog] = useState<IBlog[]|null>()
+    const data_channel = DATA_CHANNEL;
+    const [dataBlogs, setDataBlogs] = useState<IBlog[]|null>()
+    const viewBlog = (postId:string)=>{
+        router.push(`/blog/blogId?p=${postId}&b=${dataChannelState.blogId}`);
+    }
+    const [dataChannelState, setDataChannelState] = useState<DataChannel>({
+        name: "We luck",
+        api_key: "AIzaSyBnTJYeJFCcwmKiC8dDWPce6WuiTKA2pR4",
+        channelId: "UC3dW5i2TdXzcXBUEYpl8pgQ",
+        blogId: "2336283564104274815"
+    })
+    const changeCategory = (item: any) => {
+        setDataBlogs(null);
+        setListBlog(null);
+        setDataChannelState(item);
+        router.push(`?blogId=${item.blogId}&&channel=${item.name}`)
     }
     useEffect(() => {
-        axios.get(`${BASE_URL_BLOG}${blogId}/posts?key=${API_KEY}`)
+        let data = dataChannelState;
+        let thumb="";
+        axios.get(`${BASE_URL_BLOG}${blogId}/posts?key=${data.api_key}`)
             .then((res) => {
-                setFlag(1);
                 const data = res.data.items;
                 let result = [];
                 for (let i = 0; i < data.length; i++) {
@@ -57,9 +72,14 @@ const Blog = () => {
                             displayName: "",
                         }
                     } as IBlog;
-                    const cheerio = require('cheerio');
+                    const cheerio=require('cheerio');
                     const content = cheerio.load(data[i].content);
                     const idVideo = content("iframe").attr('youtube-src-id');
+                    if(idVideo){
+                        temp.videoId = idVideo;
+                    }else {
+                        temp.videoId = content("img").attr('src') || "";
+                    }
                     //get subtitle
                     let text;
                     if (content("div.separator").text()) {
@@ -70,8 +90,12 @@ const Blog = () => {
                     const options = {month: "long", day: "numeric", year: "numeric"} as any;
                     const date = new Date(data[i].published);
                     const americanDate = new Intl.DateTimeFormat("en-US", options).format(date);
-                    temp.videoId = idVideo;
-                    temp.thumbnailUrl = thumb;
+
+                    if(thumb != ""){
+                        temp.thumbnailUrl = thumb;
+                    }else {
+                        temp.thumbnailUrl = "";
+                    }
                     temp.title = data[i].title;
                     temp.content = text;
                     temp.publishDate = americanDate;
@@ -87,7 +111,7 @@ const Blog = () => {
                 console.log(error);
             }).finally(() => {
         })
-    }, []);
+    }, [blogId, dataChannelState]);
     useEffect(() => {
         if (listBlog) {
             const listIdvideo = listBlog.map((value) => value.videoId);
@@ -95,12 +119,18 @@ const Blog = () => {
             axios.get(`${BASE_URL_VIDEO}videos`, {
                 params: {
                     part: "snippet,contentDetails,player",
-                    key: API_KEY,
+                    key: dataChannelState.api_key,
                     id: strList
                 }
             }).then((res) => {
                 for (let i = 0; i < listBlog.length; i++) {
-                    listBlog[i].thumbnailUrl = res.data.items[i].snippet.thumbnails.standard.url;
+                    const thumb =  res.data.items.find((item:any)=>listBlog[i].videoId == item.id);
+                    if(thumb){
+                        listBlog[i].thumbnailUrl= thumb.snippet?.thumbnails.standard.url;
+
+                    }else {
+                        listBlog[i].thumbnailUrl=listBlog[i].videoId;
+                    }
                 }
                 setDataBlogs(listBlog);
             }).catch((error) => {
@@ -108,7 +138,10 @@ const Blog = () => {
             }).finally(() => {
             })
         }
-    }, [flag]);
+    },[dataChannelState,listBlog]);
+    useEffect(() => {
+        require('../bootstrap.min.css')
+    }, []);
     return (
         <>
             <div className="header-blog">
@@ -120,29 +153,12 @@ const Blog = () => {
                         <h2 className="tm-page-title mb-4">Blogs</h2>
                         <div className="tm-categories-container mb-4 flex">
                             <h3 className="tm-text-primary tm-categories-text">Categories:</h3>
-                            <ul className="nav tm-category-list">
-                                <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link active">All</a>
-                                </li>
-                                <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Mouse
-                                    Farm</a></li>
-                                <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Nova
-                                    Trend</a>
-                                </li>
-                                <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">We
-                                    Win New</a>
-                                </li>
-                                <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Swag
-                                    Lab</a>
-                                </li>
-                                <li className="nav-item tm-category-item"><a href="#"
-                                                                             className="nav-link tm-category-link">Swag
-                                    Tech</a>
-                                </li>
+                            <ul className="nav tm-category-list flex gap-5">
+                                {data_channel.map((item, index: number) => <li key={index}
+                                                                               className={channel == item.name ? "nav-item tm-category-item active" : "nav-item tm-category-item"}>
+                                    <a className="nav-link tm-category-link cursor-pointer"
+                                       onClick={() => changeCategory(item)}>{item.name}</a>
+                                </li>)}
                             </ul>
                         </div>
                     </div>
@@ -150,9 +166,11 @@ const Blog = () => {
                 <div className="row tm-catalog-item-list">
                     {dataBlogs ? dataBlogs.map((value, index) =>
                         <div key={index} className="col-lg-4 col-md-6 col-sm-12 tm-catalog-item tm-bg-gray">
-                            <div className="position-relative tm-thumbnail-container" >
-                                <img src={value.thumbnailUrl} alt="Image" className="img-fluid tm-catalog-item-img"/>
-                                <a className="position-absolute tm-img-overlay" onClick={()=>viewBlog(value.id)}>
+                            <div className="position-relative tm-thumbnail-container"
+                                 onClick={() => viewBlog(value.id)}>
+                                <Image width={200} height={200} quality={100} src={value.thumbnailUrl} alt="Image"
+                                       className="img-fluid tm-catalog-item-img"/>
+                                <a className="position-absolute tm-img-overlay">
                                 </a>
                             </div>
                             <div className="p-4 tm-catalog-item-description">
@@ -163,7 +181,8 @@ const Blog = () => {
                                 <p>{value.publishDate}</p>
                                 <div className="author">
                                     <div className="avatar">
-                                        <img src={value.author.avatarUrl} alt="avarta"/>
+                                        <Image width={200} height={200} quality={100} src={value.author.avatarUrl}
+                                               alt="avarta"/>
                                         <p>{value.author.displayName}</p>
                                     </div>
                                 </div>
@@ -176,18 +195,18 @@ const Blog = () => {
                     </>}
 
                 </div>
+                <div>
+                    <ul className="nav tm-paging-links flex">
+                        <li className="nav-item active"><a href="#" className="nav-link tm-paging-link">1</a>
+                        </li>
+                        <li className="nav-item"><a href="#" className="nav-link tm-paging-link">2</a></li>
+                        <li className="nav-item"><a href="#" className="nav-link tm-paging-link">3</a></li>
+                        <li className="nav-item"><a href="#" className="nav-link tm-paging-link">4</a></li>
+                        <li className="nav-item"><a href="#" className="nav-link tm-paging-link"> &#707;</a></li>
+                    </ul>
+                </div>
+            </div>
 
-            </div>
-            <div>
-                <ul className="nav tm-paging-links">
-                    <li className="nav-item active"><a href="#" className="nav-link tm-paging-link">1</a>
-                    </li>
-                    <li className="nav-item"><a href="#" className="nav-link tm-paging-link">2</a></li>
-                    <li className="nav-item"><a href="#" className="nav-link tm-paging-link">3</a></li>
-                    <li className="nav-item"><a href="#" className="nav-link tm-paging-link">4</a></li>
-                    <li className="nav-item"><a href="#" className="nav-link tm-paging-link"> &#707;</a></li>
-                </ul>
-            </div>
         </>
     );
 };

@@ -8,7 +8,8 @@ import parse from  "html-react-parser";
 import moment from "moment/moment";
 import Image from "next/image";
 import {convertDate} from "@/app/const/helper";
-import SkeletonComment from "@/component/SkeletonComment/SkeletonComment";
+import SkeletonComment from "@/app/component/SkeletonComment/SkeletonComment";
+
 interface IItemVideo {
     videoId: string|null;
     title: string;
@@ -20,16 +21,20 @@ interface IItemVideo {
 }
 
 const Video = () => {
-    const params = useSearchParams();
+    const searchParams = useSearchParams();
+    const videoId=  searchParams.get('videoId');
     const [itemVideo, setItemVideo] = useState<IItemVideo>()
     const [comments, setComments] = useState<any>(null)
     const channelId = "UCB1mpBAGHpUHBs17UZZVeDw";
+    useEffect(() => {
+        require('../bootstrap.min.css')
+    }, []);
     useEffect(() => {
         axios.get(`${BASE_URL_VIDEO}videos`, {
             params: {
                 part: "snippet,contentDetails,player",
                 key: API_KEY,
-                id: params.get('videoId')
+                id: videoId
             }
         }).then((res) => {
             const item = res.data.items[0];
@@ -50,13 +55,13 @@ const Video = () => {
         }).finally(() => {
 
         })
-    }, [params]);
+    }, [searchParams, videoId]);
     useEffect(() => {
         axios.get(`${BASE_URL_VIDEO1}/commentThreads`,{
             params:{
                 part: "snippet,replies",
                 key: API_KEY,
-                videoId: params.get('videoId')
+                videoId: videoId
             }
         })
             .then((res)=>{
@@ -72,7 +77,7 @@ const Video = () => {
         return () => {
             setComments(null);
         }
-    }, [itemVideo]);
+    }, [itemVideo, searchParams, videoId]);
     return (
         <>
             <div className="header-video">

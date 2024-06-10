@@ -7,18 +7,20 @@ import {API_KEY, BASE_URL_BLOG} from "@/app/const/const";
 import parse from "html-react-parser";
 import {convertDate} from "@/app/const/helper";
 import Image from "next/image";
-import SkeletonComment from "@/component/SkeletonComment/SkeletonComment";
-import SkeletonItem from "@/component/SkeletonItem/SkeletonItem";
+import SkeletonComment from "@/app/component/SkeletonComment/SkeletonComment";
+import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";
+
 
 
 
 const BlogId = () => {
-    const param = useSearchParams()
-    const blogId = "2111955837338522767";
+    const param = useSearchParams();
+    const postId=param.get('p')
+    const blogId = param.get('b');
     const [dataBlog, setDataBlog] = useState<any>()
     const [comments, setComments] = useState<any>(null)
     useEffect(() => {
-        axios.get(`${BASE_URL_BLOG}${blogId}/posts/${param.get('b')}?key=${API_KEY}`)
+        axios.get(`${BASE_URL_BLOG}${blogId}/posts/${postId}?key=${API_KEY}`)
             .then((res) => {
                 setDataBlog(res.data);
             }).catch((error)=>{
@@ -26,7 +28,7 @@ const BlogId = () => {
         }).finally(()=>{
 
         })
-    }, [param]);
+    }, [blogId, param, postId]);
     useEffect(() => {
         console.log(dataBlog?.replies.selfLink)
         axios.get(`${dataBlog?.replies.selfLink}?key=${API_KEY}`)
