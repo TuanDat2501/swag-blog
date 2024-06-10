@@ -4,10 +4,6 @@ import './style.scss';
 import IUpload from "@/icon/IUpload";
 import ITick from "@/icon/ITick";
 import moment from "moment";
-<<<<<<< HEAD
-=======
-import {google} from 'googleapis'
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c
 import Toast from "@/app/component/toast/Toast";
 import {
     ref,
@@ -21,10 +17,6 @@ import {
 import {storage} from "@/app/firebase";
 import {v4} from "uuid";
 import axios from "axios";
-<<<<<<< HEAD
-=======
-import {randomStr} from "@/const/helper";
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c
 import {Simulate} from "react-dom/test-utils";
 import {useForm} from "react-hook-form";
 
@@ -105,11 +97,9 @@ const Video = () => {
             }
         );
     }
-<<<<<<< HEAD
+
     /*const submit = async () => {
-=======
-    const submit = async () => {
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c
+
         if (name) {
             if (email) {
                 if(linkUpload || linkYoutube){
@@ -140,11 +130,8 @@ const Video = () => {
         } else {
             showToast("warning", "You need to enter your full name!")
         }
-<<<<<<< HEAD
+
     }*/
-=======
-    }
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c
     useEffect(() => {
         if (file == null) return;
         uploadVideo(file);
@@ -216,13 +203,9 @@ const Video = () => {
                         </div>
                         <div className="input">
                             <label htmlFor="link">Or Link Youtube</label>
-<<<<<<< HEAD
                             <input type="text" id="link"
                                    {...register('linkYoutube')}
                             />
-=======
-                            <input type="text" name="link" id="link" onChange={(e) => setText(e.target.value, 3)}/>
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c
                         </div>
                         <div className="rule">
                             <div className="checkbox">
@@ -237,21 +220,12 @@ const Video = () => {
                         </div>
                         <div className="input">
                             <label htmlFor="message">Message</label>
-<<<<<<< HEAD
                             <textarea id="message" rows={4} cols={20}
                                       {...register('message')}/>
                         </div>
                         <button type="submit" className="btn rounded-0 btn-primary tm-btn-small">submit</button>
                     </form>
                     {/*<button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button>*/}
-=======
-                            <textarea name="message" id="message" rows={4} cols={20}
-                                      onChange={(e) => setText(e.target.value, 4)}/>
-                        </div>
-                        <button type="submit" className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button>
-                    </form>
-                    <button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button>
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c
                 </div>
                 {isShowToast && <Toast status={status} text={textToast}></Toast>}
             </div>

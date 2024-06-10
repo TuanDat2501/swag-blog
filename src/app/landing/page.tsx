@@ -4,18 +4,13 @@ import './style.scss';
 import IPlay from "@/icon/IPlay";
 import {useRouter, useSearchParams} from "next/navigation";
 import axios from "axios";
-<<<<<<< HEAD:src/app/landing/page.tsx
+
 import Image from "next/image";
 
 import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";
 import {DataChannel} from "@/app/const/interface";
 import {BASE_URL_VIDEO, DATA_CHANNEL} from "@/app/const/const";
-=======
-import { BASE_URL_VIDEO, DATA_CHANNEL} from "@/const/const";
-import Image from "next/image";
-import {DataChannel} from "@/const/interface";
-import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c:src/app/index/page.tsx
+
 
 interface IItemVideo {
     videoId: string;
@@ -132,11 +127,8 @@ const Landing = () => {
             waitUntil(3.5, 50, 2);
             waitUntil(2000, 1, 3);
             getData("", data);
-<<<<<<< HEAD:src/app/landing/page.tsx
         }, [channelId, data_channel]);
-=======
-        }, []);
->>>>>>> a953e70d40ee2f1d31ee6a688bd8faf2cc1bd80c:src/app/index/page.tsx
+
     useEffect(() => {
         getData("",dataChannelState)
     }, [dataChannelState]);
