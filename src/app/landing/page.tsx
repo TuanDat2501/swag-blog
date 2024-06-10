@@ -1,5 +1,5 @@
 'use client'
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useState} from 'react';
 import './style.scss';
 import IPlay from "@/icon/IPlay";
 import {useRouter, useSearchParams} from "next/navigation";
@@ -30,12 +30,7 @@ const Landing = () => {
     const [listIdVideo, setListIdVideo] = useState("");
     const [listItemVideo, setlistItemVideo] = useState<IItemVideo[]>()
     const data_channel = DATA_CHANNEL;
-    const [dataChannelState, setDataChannelState] = useState<DataChannel>({
-        name: "We luck",
-        api_key: "AIzaSyBnTJYeJFCcwmKiC8dDWPce6WuiTKA2pR4",
-        channelId: "UC3dW5i2TdXzcXBUEYpl8pgQ",
-        blogId: "2336283564104274815"
-    })
+    const [dataChannelState, setDataChannelState] = useState<DataChannel|null>()
 
     async function waitUntil(limit: number, ms: number, flag: number) {
         var count = 0;
@@ -70,7 +65,7 @@ const Landing = () => {
         router.push('/video?videoId=' + videoId);
     }
     const nextPage = (pageToken: string) => {
-        getData(pageToken, dataChannelState);
+        dataChannelState && getData(pageToken, dataChannelState);
     }
     const changeCategory = (item: any) => {
         router.push(`?c=${item.channelId}`)
@@ -128,9 +123,16 @@ const Landing = () => {
             waitUntil(2000, 1, 3);
             getData("", data);
         }, [channelId, data_channel]);
-
+    useLayoutEffect(()=>{
+        setDataChannelState({
+            name: "We luck",
+            api_key: "AIzaSyBnTJYeJFCcwmKiC8dDWPce6WuiTKA2pR4",
+            channelId: "UC3dW5i2TdXzcXBUEYpl8pgQ",
+            blogId: "2336283564104274815"
+        })
+    },[])
     useEffect(() => {
-        getData("",dataChannelState)
+        dataChannelState && getData("",dataChannelState)
     }, [dataChannelState]);
 
     return (
@@ -181,8 +183,8 @@ const Landing = () => {
                                     <ul className="nav tm-category-list">
                                         {data_channel.map((item, index: number) => <li key={index}
                                                                                        className="nav-item tm-category-item">
-                                            <a className="nav-link tm-category-link active cursor-pointer"
-                                               onClick={() => changeCategory(item)}>{item.name}</a>
+                                            <div className={channelId == item.channelId ? "nav-link tm-category-link active cursor-pointer" : "nav-link tm-category-link cursor-pointer"}
+                                               onClick={() => changeCategory(item)}>{item.name}</div>
                                         </li>)}
                                     </ul>
                                 </div>
@@ -207,11 +209,12 @@ const Landing = () => {
                                         </div>
                                     </div>
 
-                            ) : <>
+                            ) : 
+                            <div className='flex gap-3'>
                                 <SkeletonItem></SkeletonItem>
                                 <SkeletonItem></SkeletonItem>
                                 <SkeletonItem></SkeletonItem>
-                            </>}
+                            </div>}
 
                         </div>
                         <div>

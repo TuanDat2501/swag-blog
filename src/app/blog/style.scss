@@ -20,8 +20,8 @@
   margin-right: auto;
   margin-top: 20px;
   .tm-catalog-item-list {
-    justify-content: space-between;
     min-height: 500px;
+    gap:20px;
     .tm-catalog-item{
       .tm-catalog-item-description{
         p{
@@ -71,12 +71,15 @@
   .tm-thumbnail-container {
     overflow: hidden;
     border-radius: 10px;
+    height: 350px;
   }
 
   .tm-thumbnail-container img {
     transition: all 0.3s ease;
     border-radius: 10px;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .tm-thumbnail-container:hover img {
