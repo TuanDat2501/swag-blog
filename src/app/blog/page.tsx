@@ -10,6 +10,7 @@ import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";
 import { DataChannel } from "@/app/const/interface";
 import { BASE_URL_BLOG, BASE_URL_VIDEO, DATA_CHANNEL } from "@/app/const/const";
 import { generateArr } from '../const/helper';
+import Loading from '../component/Loading/Loading';
 
 interface IBlog {
     id: string;
@@ -36,9 +37,9 @@ const Blog = () => {
     const [listBlog, setListBlog] = useState<IBlog[] | null>()
     const data_channel = DATA_CHANNEL;
     const [dataBlogs, setDataBlogs] = useState<any[] | null>()
-    const [linkPosts,setLinkPosts] = useState("");
-    const [nextPageToken,setNextPageToken] = useState("");
-    const [prevPageToken,setPrevPageToken] = useState("");
+    const [linkPosts, setLinkPosts] = useState("");
+    const [nextPageToken, setNextPageToken] = useState("");
+    const [isLoadingPage, setIsLoadingPage] = useState(false);
     const viewBlog = (postId: string) => {
         router.push(`/blog/blogId?p=${postId}&b=${dataChannelState.blogId}`);
     }
@@ -55,19 +56,21 @@ const Blog = () => {
         //setDataChannelState(item);
         router.push(`?blogId=${item.blogId}&channel=${item.name}`)
     }
-    const changePage = (nextPageToken:string) => {
+    const changePage = (nextPageToken: string) => {
         let data = data_channel.find((value) => value.blogId == blogId);
         let thumb = "";
+        setIsLoadingPage(true)
         axios(`${linkPosts}?key=${data?.api_key}&pageToken=${nextPageToken}`)
-            .then(res=>{
+            .then(res => {
+                setIsLoadingPage(false)
                 const data = res.data.items;
-                if(res.data.nextPageToken){
+                if (res.data.nextPageToken) {
                     setNextPageToken(res.data.nextPageToken);
-                }else{
+                } else {
                     setNextPageToken("");
                 }
-                
-                
+
+
                 let result = [];
                 for (let i = 0; i < data.length; i++) {
                     if (data[i]) {
@@ -122,7 +125,7 @@ const Blog = () => {
 
                 setListBlog(arr);
             })
-        
+
     }
     useEffect(() => {
         let data = data_channel.find((value) => value.blogId == blogId);
@@ -133,9 +136,9 @@ const Blog = () => {
                 setLinkPosts(res.data.posts.selfLink);
                 axios.get(`${res.data.posts.selfLink}?key=${data.api_key}&maxResults=9`).then(res => {
                     const data = res.data.items;
-                    if(res.data.nextPageToken){
+                    if (res.data.nextPageToken) {
                         setNextPageToken(res.data.nextPageToken);
-                    }if(res.data.nextPageToken){
+                    } if (res.data.nextPageToken) {
                         setNextPageToken(res.data.nextPageToken);
                     }
                     let result = [];
@@ -285,9 +288,10 @@ const Blog = () => {
 
                 </div>
                 <div>
-                    <ul className="nav tm-paging-links flex">
-                        {nextPageToken !=="" && <li className="nav-item"><a onClick={()=>changePage(nextPageToken)} className="nav-link tm-paging-link"> See more</a></li>}
-                    </ul>
+                    {nextPageToken !== "" && <ul className="nav tm-paging-links flex">
+                        {isLoadingPage ? <Loading></Loading> : <li className="nav-item"><a onClick={() => changePage(nextPageToken)} className="nav-link tm-paging-link"> See more</a></li>}
+                    </ul>}
+
                 </div>
             </div>
 
