@@ -45,7 +45,10 @@
         .file {
           position: relative;
         }
-
+        .error{
+          color: red;
+          font-style: italic;
+        }
         .input-position {
           .input-file {
             cursor: pointer;

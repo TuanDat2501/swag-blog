@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import './style.scss';
 import IUpload from "@/icon/IUpload";
 import ITick from "@/icon/ITick";
-import moment from "moment";
 import Toast from "@/app/component/toast/Toast";
 import {
     ref,
@@ -13,7 +12,6 @@ import {
     listAll,
     list,
 } from "firebase/storage";
-
 import {storage} from "@/app/firebase";
 import {v4} from "uuid";
 import axios from "axios";
@@ -97,8 +95,36 @@ const Video = () => {
             }
         );
     }
-
-    /*const submit = async () => {
+   /*  const submit = async () => {
+        const auth = new google.auth.GoogleAuth({
+            credentials: {
+                client_email: process.env.NEXT_PUBLIC_CLIENT_EMAIL_ID,
+                client_id: process.env.NEXT_PUBLIC_CLIENT_ID_SHEET,
+                private_key: process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+            },
+            scopes: [
+                'https://www.googleapis.com/auth/drive',
+                'https://www.googleapis.com/auth/drive.file',
+                'https://www.googleapis.com/auth/spreadsheets',
+            ],
+        });
+    
+        const sheets = google.sheets({
+            auth,
+            version: 'v4',
+        });
+        const {name,email,linkUpload,linkYoutube,message}=req.body
+        const response = sheets.spreadsheets.values.append({
+            spreadsheetId: "1FGkk4LScYui8RuiGCgGMt-GREZuG9SDgKwhwyXaaFXc",
+            range: 'Page1!A2:E2',
+            valueInputOption: 'RAW',
+            requestBody: {
+                values: [[name||"",email||"",linkUpload||"",linkYoutube||"",message||""]],
+                
+            },
+        });
+    } */
+    /* const submit = async () => {
 
         if (name) {
             if (email) {
@@ -131,7 +157,7 @@ const Video = () => {
             showToast("warning", "You need to enter your full name!")
         }
 
-    }*/
+    } */
     useEffect(() => {
         if (file == null) return;
         uploadVideo(file);
@@ -143,7 +169,7 @@ const Video = () => {
         formState: { errors }, // catch error messages
     } = useForm();
     function submitHandler(data:any) {
-        fetch('http://localhost:3001/write', {
+        fetch('https://data-swag.onrender.com/write', {
             method: 'POST',
             body: JSON.stringify({...data,linkUpload:linkUpload}),
             headers: {
@@ -178,14 +204,17 @@ const Video = () => {
                         <div className="input">
                             <label htmlFor="name">Name</label>
                             <input type="text" id="name"
-                                   {...register('name', { required: 'Please enter your name' })}
+                                   {...register('name', { required:true })}
+                                   aria-invalid={errors.name ? "true" : "false"}    
                             />
+                              {errors.name?.type === 'required' && <p className='error' role="alert">*Please enter your name</p>}
                         </div>
                         <div className="input">
                             <label htmlFor="email">Email</label>
                             <input type="text" id="email"
-                                   {...register('email', { required: 'Please enter your name' })}
+                                   {...register('email', { required: true })}
                             />
+                              {errors.email?.type === 'required' && <p className='error' role="alert">*Please enter your email</p>}
                         </div>
                         <div className="input">
                             <div className="container-input input-position flex flex-col gap-2 file">
@@ -199,7 +228,7 @@ const Video = () => {
                                     <input id="position" type="file" placeholder="Vị trí bạn quan tâm"
                                            onChange={(e) => setText(e.target.files, 5)}/>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
                         <div className="input">
                             <label htmlFor="link">Or Link Youtube</label>
@@ -225,7 +254,7 @@ const Video = () => {
                         </div>
                         <button type="submit" className="btn rounded-0 btn-primary tm-btn-small">submit</button>
                     </form>
-                    {/*<button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button>*/}
+                    {/* <button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button> */}
                 </div>
                 {isShowToast && <Toast status={status} text={textToast}></Toast>}
             </div>
