@@ -140,9 +140,9 @@ const Landing = () => {
             <div className="main-index">
                 <div className="tm-welcome-container text-center text-white">
                     <div className="tm-welcome-container-inner">
-                        <p className="tm-welcome-text mb-1 text-white">Video Catalog is brought to you by
+                      {/*   <p className="tm-welcome-text mb-1 text-white">Video Catalog is brought to you by
                             TemplateMo.</p>
-                        <p className="tm-welcome-text mb-5 text-white">This is a full-width video banner.</p>
+                        <p className="tm-welcome-text mb-5 text-white">This is a full-width video banner.</p> */}
                         {/* <a href="#" className="btn tm-btn-animate tm-btn-cta tm-icon-down">
                             <span>Discover</span>
                         </a>*/}
@@ -156,7 +156,7 @@ const Landing = () => {
                                 <div className="e-con-text">Million Views</div>
                             </div>
                             <div className="e-con-item">
-                                <div className="e-con-number">{videos}</div>
+                                <div className="e-con-number">{videos}+</div>
                                 <div className="e-con-text">Videos</div>
                             </div>
                             <div className="e-con-item">

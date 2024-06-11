@@ -21,6 +21,7 @@ const Toast = ({text, status}: ToastProps) => {
             transform: isMobile ? 'translateX(-50%)' :'translateX(-10%)',
             bottom: '100px',
             right: isMobile ? "unset" :"10%",
+            zIndex:999999,
         }} data-aos="fade-left">
             {status === 'success' &&
                 <div id="toast-success"
