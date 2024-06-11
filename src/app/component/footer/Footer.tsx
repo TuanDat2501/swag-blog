@@ -22,11 +22,10 @@ const Footer = () => {
                     <div className="p-5 tm-bg-gray">
                         <h3 className="tm-text-primary mb-4">Quick Links</h3>
                         <ul className="list-unstyled tm-footer-links">
-                            <li><a href="#">Duis bibendum</a></li>
-                            <li><a href="#">Purus non dignissim</a></li>
-                            <li><a href="#">Sapien metus gravida</a></li>
-                            <li><a href="#">Eget consequat</a></li>
-                            <li><a href="#">Praesent eu pulvinar</a></li>
+                            <li><a href="/video">Video</a></li>
+                            <li><a href="/submit-videos">Submit video</a></li>
+                            <li><a href="/blog">Blog</a></li>
+                    
                         </ul>
                     </div>
                 </div>
