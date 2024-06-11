@@ -4,7 +4,7 @@ import './style.scss';
 import IPlay from "@/icon/IPlay";
 import {useRouter, useSearchParams} from "next/navigation";
 import axios from "axios";
-
+import 'bootstrap/dist/css/bootstrap.css';
 import Image from "next/image";
 
 import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";

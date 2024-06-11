@@ -18,34 +18,24 @@ const Footer = () => {
                         </form>
                     </div>
                 </div>
-                <div className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
+                <div className="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
                     <div className="p-5 tm-bg-gray">
                         <h3 className="tm-text-primary mb-4">Quick Links</h3>
                         <ul className="list-unstyled tm-footer-links">
-                            <li><a href="/video">Video</a></li>
+                            <li><a href="/landing">Videos</a></li>
                             <li><a href="/submit-videos">Submit video</a></li>
                             <li><a href="/blog">Blog</a></li>
+                            <li><a href="/contact-us">Contact Us</a></li>
                     
                         </ul>
                     </div>
                 </div>
-                <div className="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 mb-4">
-                    <div className="p-5 tm-bg-gray h-100">
-                        <h3 className="tm-text-primary mb-4">Our Pages</h3>
-                        <ul className="list-unstyled tm-footer-links">
-                            <li><a href="#">Our Videos</a></li>
-                            <li><a href="#">License Terms</a></li>
-                            <li><a href="#">About Us</a></li>
-                            <li><a href="#">Contact</a></li>
-                            <li><a href="#">Privacy Policies</a></li>
-                        </ul>
-                    </div>
-                </div>
+            
             </div>
             <footer className="row pt-5">
                 <div className="col-12">
                     <p className="text-right">Copyright 2020 The Video Catalog Company
-                        - Designed by <a href="https://templatemo.com" rel="nofollow" target="_parent">TemplateMo</a>
+                        - Designed by <a rel="nofollow" target="_parent">Swag Media</a>
                     </p>
                 </div>
             </footer>

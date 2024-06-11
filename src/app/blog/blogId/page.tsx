@@ -9,7 +9,7 @@ import {convertDate} from "@/app/const/helper";
 import Image from "next/image";
 import SkeletonComment from "@/app/component/SkeletonComment/SkeletonComment";
 import SkeletonItem from "@/app/component/SkeletonItem/SkeletonItem";
-
+import 'bootstrap/dist/css/bootstrap.css';
 
 
 

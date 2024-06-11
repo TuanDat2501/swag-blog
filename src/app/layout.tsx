@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "SWAG MEDIA",
   description: "SWAG MEDIA",
+  icons:"./img/Untitled-1.jpg"
 };
 
 export default function RootLayout({
