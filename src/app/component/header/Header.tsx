@@ -9,7 +9,7 @@ import { useMediaQuery } from 'usehooks-ts';
 const Header = () => {
     const router = useRouter();
     const pathName = usePathname();
-    const isMobile = useMediaQuery('max-width:430px')
+    const isMobile = useMediaQuery('(max-width:430px)');
     const [isOpen, setIsOpen] = useState(false)
     const openMenu = () => {
         setIsOpen(!isOpen);
@@ -30,7 +30,7 @@ const Header = () => {
                         <div className="col-5 col-md-8 ml-auto mr-0">
                             <div className="tm-site-nav">
                                 <nav className="navbar navbar-expand-lg mr-0 ml-auto" id="tm-main-nav">
-                                    {!isMobile ? <> <button
+                                    {isMobile ? <> <button
                                         onClick={openMenu}
                                         className="navbar-toggler tm-bg-black py-2 px-3 mr-0 ml-auto collapsed flex justify-center items-center"
                                         type="button"
