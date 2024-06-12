@@ -34,6 +34,7 @@ const Video = () => {
     const [linkYoutube, setLinkYoutube] = useState("")
     const [message, setMessage] = useState("")
     const [isShowToast, setIsShowToast] = useState(true);
+    const [isDisable, setIsDisable] = useState(false);
     const [status, setStatus] = useState<string | null>(null)
     const [progress,setProgress] = useState(0);
     const [textToast, setTextToast] = useState("")
@@ -68,6 +69,7 @@ const Video = () => {
     }
     const uploadVideo = (file: any) => {
         if (file == null) return;
+        setIsDisable(true);
         const storageRef = ref(storage, '/' + file.name);
         const uploadTask = uploadBytesResumable(storageRef, file);
         uploadTask.on('state_changed',
@@ -96,6 +98,7 @@ const Video = () => {
                     setLinkUpload(downloadURL);
                     setIsLoadingFileIcon(true);
                     setIsLoadingFileComplete(true);
+                    setIsDisable(false);
                 });
             }
         );
@@ -274,7 +277,7 @@ const Video = () => {
                             <textarea id="message" rows={4} cols={20}
                                 {...register('message')} />
                         </div>
-                        <button type="submit" className="btn rounded-0 btn-primary tm-btn-small">submit</button>
+                        <button disabled={isDisable} type="submit" className="btn rounded-0 btn-primary tm-btn-small">submit</button>
                     </form>
                     {/* <button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button> */}
                 </div>
