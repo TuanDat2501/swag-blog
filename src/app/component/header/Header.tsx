@@ -46,6 +46,9 @@ const Header = () => {
                                             <li className={pathName === "/blog" ? "nav-item active" : "nav-item"}  onClick={()=>router.push('/blog')}>
                                                 <a className="nav-link tm-nav-link">Blog</a>
                                             </li>
+                                            <li className={pathName === "/contact-us" ? "nav-item active" : "nav-item"}  onClick={()=>router.push('/blog')}>
+                                                <a className="nav-link tm-nav-link">Contact Us</a>
+                                            </li>
                                         </ul>
                                     </div>
                                 </nav>

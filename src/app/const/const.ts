@@ -33,4 +33,9 @@ export const DATA_CHANNEL = [
         channelId: "UCHXMtIadBUGVhfCzwUoGLuA",
         blogId: "7456989316884997047"
     },
+    {name: "Mad Things",
+        api_key: "AIzaSyBkc7A07LpmPkye9Sk1BzztuFeoBoHsNE0",
+        channelId: "UC6LGqSwjKWunm1tjxckvOAQ",
+        blogId: "5498915970676003422"
+    },
 ]

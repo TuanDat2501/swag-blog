@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "SWAG MEDIA",
   description: "SWAG MEDIA",
-  icons:"./img/Untitled-1.jpg"
+  icons:"./img/favicon-16x16.png"
 };
 
 export default function RootLayout({
