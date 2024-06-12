@@ -40,7 +40,7 @@
 
   #tm-main-nav .nav-item .nav-link { border-bottom: 1px solid transparent;cursor: pointer }
   .active{
-    border-bottom: 1px solid white;
+    //border-bottom: 1px solid white;
     color: #fff;
   }
   #tm-main-nav .nav-item.active .nav-link,
@@ -51,4 +51,22 @@
 }
 #navbar-nav{
   justify-content: end;
+}
+@media screen and (max-width:430px) {
+  .tm-site-header{
+    .row{
+      align-items: flex-start!important;
+    }
+  }
+  .tm-logo-container{
+    justify-content: space-between!important;
+    padding: 0!important;
+  }
+
+  #tm-main-nav{
+    padding: 0!important;
+  }
+  .tm-site-header .tm-nav-link{
+    font-size: 12px!important;
+  }
 }

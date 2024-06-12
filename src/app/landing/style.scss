@@ -113,6 +113,9 @@
       .tm-btn-cta:before { font-size: 180%; }
       .tm-icon-down:before { content: '\21E9'; }
       .tm-btn-cta:hover { color: white; }
+      @media screen and (max-width:430px) {
+        margin-top: 20%;
+      }
     }
 
     .tm-welcome-text {
