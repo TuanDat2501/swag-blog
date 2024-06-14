@@ -18,8 +18,11 @@ import axios from "axios";
 import { Simulate } from "react-dom/test-utils";
 import { useForm } from "react-hook-form";
 import { Progress } from 'antd';
+import { redirect, useRouter, useSearchParams } from 'next/navigation';
 const Video = () => {
-
+    const router = useRouter();
+    const params = useSearchParams()
+    const code = params.get('code');
     useEffect(() => {
         require("../../app/bootstrap.min.css");
     }, []);
@@ -32,11 +35,13 @@ const Video = () => {
     const [email, setEmail] = useState("")
     const [linkUpload, setLinkUpload] = useState("")
     const [linkYoutube, setLinkYoutube] = useState("")
+    const [base64File, setBase64File] = useState("")
     const [message, setMessage] = useState("")
     const [isShowToast, setIsShowToast] = useState(true);
+    const [isLogin, setIsLogin] = useState(false);
     const [isDisable, setIsDisable] = useState(false);
     const [status, setStatus] = useState<string | null>(null)
-    const [progress,setProgress] = useState(0);
+    const [progress, setProgress] = useState(0);
     const [textToast, setTextToast] = useState("")
     const showToast = (status: string, text: string) => {
         setStatus(status);
@@ -102,8 +107,38 @@ const Video = () => {
                 });
             }
         );
+        /* const fileReader = new FileReader();
+        fileReader.onload = ()=>{
+            console.log("resu",fileReader.result);
+        }
+        const blobFile = new Blob */
+        const blob = new Blob([file])
+        const file1 = new File([blob],"file.jpg")
+        console.log(blob);
+        console.log(file1);
+        reader(file,(err:any, res:any) => {
+            console.log(dataURLtoFile(res,file.name)); // Base64 `data:image/...` String result.
+            setBase64File(res);
+
+          })
     }
-    
+    function dataURLtoFile(dataurl:any, filename:any) {
+        var arr = dataurl.split(','),
+            mime = arr[0].match(/:(.*?);/)[1],
+            bstr = atob(arr[arr.length - 1]), 
+            n = bstr.length, 
+            u8arr = new Uint8Array(n);
+        while(n--){
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        return new File([u8arr], filename, {type:mime});
+    }
+    function reader(file:any, callback:any) {
+        const fr = new FileReader();
+        fr.onload = () => callback(null, fr.result);
+        fr.onerror = (err) => callback(err);
+        fr.readAsDataURL(file);
+      }
     /*  const submit = async () => {
          const auth = new google.auth.GoogleAuth({
              credentials: {
@@ -179,33 +214,48 @@ const Video = () => {
     } = useForm();
     function submitHandler(data: any) {
         if (rule1 && rule2) {
-            if(linkUpload == "" && linkYoutube == ""){
+            if (linkUpload == "" && linkYoutube == "") {
                 showToast("warning", "You need to upload a video!")
-            }else{
-                fetch('https://data-swag.onrender.com/write', {
-                    method: 'POST',
-                    body: JSON.stringify({ ...data, linkUpload: linkUpload }),
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }).then(res => {
-                    if (res.status == 200) {
-                        showToast("success", "You have successfully uploaded the video!")
-                        reset();
-                    }else{
-                        showToast("failed", "Your video upload failed!")
-                    }
-                });
+            } else {
+                if (!code) {
+                    axios.get('http://localhost:3001/').then(res => {
+                        if (res.status == 200) {
+                            setIsLogin(true);
+                            //showToast("success", "You have successfully uploaded the video!")
+                            router.push(res.data.url);
+                            console.log(res);
+                            reset();
+                        } else {
+                            showToast("failed", "Your video upload failed!")
+                        }
+                    });
+                } else {
+
+                
+                    let form = new FormData();
+                    form.append('code',String(code));
+                    form.append('file',base64File);
+                    form.append('fileName',file.name);
+                    form.append('message',name+" "+email+" "+message);
+                    axios.post('http://localhost:3001/token',
+                        form,{
+                            headers:{
+                                "Content-Type":'application/x-www-form-urlencoded',
+                            }
+                        }
+                    )
+                }
+
             }
-        }else{
+        } else {
             showToast("warning", "You need to accept the rules!")
         }
     }
-    useEffect(()=>{
-        return ()=>{
-            setLinkUpload(""); 
+    useEffect(() => {
+        return () => {
+            setLinkUpload("");
         }
-    },[])
+    }, [])
     return (
         <>
             <div className="header-submit-video">
@@ -247,7 +297,7 @@ const Video = () => {
                                 <div className="input-file">
                                     <span className='icon-loading'>
                                         {!isLoadingFileIcon ? <IUpload width={50} height={50}></IUpload> :
-                                            <Progress className='progress' size={50} type="circle" percent={progress}/>}
+                                            <Progress className='progress' size={50} type="circle" percent={progress} />}
                                         {file ? <p>{file.name}</p> : <p>Choose your video file</p>}
                                     </span>
                                     <input id="position" type="file" placeholder="Vị trí bạn quan tâm"
@@ -259,6 +309,7 @@ const Video = () => {
                             <label htmlFor="link">Or Link Youtube</label>
                             <input type="text" id="link"
                                 {...register('linkYoutube')}
+                                onChange={(e) => setText(e.target.files, 3)}
                             />
                         </div>
                         <div className="rule">

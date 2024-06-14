@@ -1,0 +1,5 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/submit-videos/page": "app/submit-videos/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js"
+}
