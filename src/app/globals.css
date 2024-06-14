@@ -20,6 +20,7 @@ body {
   color: rgb(var(--foreground-rgb));
   background: #fff;
   overflow-x: hidden;
+  font-family: "Yeseva One", serif!important;
 }
 .tm-bg-black {
   background-color: rgba(0,0,0,0.5);

@@ -48,7 +48,8 @@ const Blog = () => {
         name: "We luck",
         api_key: "AIzaSyBnTJYeJFCcwmKiC8dDWPce6WuiTKA2pR4",
         channelId: "UC3dW5i2TdXzcXBUEYpl8pgQ",
-        blogId: "2336283564104274815"
+        blogId: "2336283564104274815",
+        items:[]
     })
     const changeCategory = (item: any) => {
         setDataBlogs(null);

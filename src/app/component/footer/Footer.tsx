@@ -34,8 +34,8 @@ const Footer = () => {
             </div>
             <footer className="row pt-5">
                 <div className="col-12">
-                    <p className="text-right">Copyright 2020 The Video Catalog Company
-                        - Designed by <a rel="nofollow" target="_parent">Swag Media</a>
+                    <p className="text-right">Copyright 2016 The Video Catalog Company
+                        - Copyright by <a rel="nofollow" target="_parent">Swag Media</a>
                     </p>
                 </div>
             </footer>

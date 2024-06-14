@@ -16,8 +16,7 @@ const Header = () => {
     }
 
     return (
-        <div>
-            <div className="absolute tm-site-header">
+            <div className="tm-site-header">
                 <div className="container-fluid relative">
                     <div className="row">
                         <div className="col-7 col-md-4">
@@ -80,7 +79,7 @@ const Header = () => {
                     </div>
                 </div>
             </div>
-        </div>
+
     );
 };
 
