@@ -10,16 +10,18 @@ import { Navigation } from 'swiper/modules';
 import { DataChannel } from '@/app/const/interface';
 import Image from 'next/image';
 import IPlay from '@/icon/IPlay';
+import { useMediaQuery } from 'usehooks-ts';
 interface Props {
 
     data: DataChannel
 }
 const SwiperComponent = ({ data }: Props) => {
+    const isMobile = useMediaQuery('(max-width:430px)')
     return (
         <div className="swipper-container">
             <h1>{data.name}</h1>
             <Swiper
-                slidesPerView={3}
+                slidesPerView={isMobile? 1:3}
                 spaceBetween={30}
                 pagination={{
                     type: 'fraction',

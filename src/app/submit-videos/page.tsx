@@ -19,10 +19,8 @@ import { Simulate } from "react-dom/test-utils";
 import { useForm } from "react-hook-form";
 import { Progress } from 'antd';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
+import Loading1 from '../component/Loading1/Loading1';
 const Video = () => {
-    const router = useRouter();
-    const params = useSearchParams()
-    const code = params.get('code');
     useEffect(() => {
         require("../../app/bootstrap.min.css");
     }, []);
@@ -68,16 +66,17 @@ const Video = () => {
                 setMessage(text);
                 break;
             case 5:
+                setIsLoadingFileIcon(true)
                 setFile(text[0]);
                 break;
         }
     }
     const uploadVideo = (file: any) => {
         if (file == null) return;
-        setIsDisable(true);
+        //setIsDisable(true);
         const storageRef = ref(storage, '/' + file.name);
         const uploadTask = uploadBytesResumable(storageRef, file);
-        uploadTask.on('state_changed',
+        /* uploadTask.on('state_changed',
             (snapshot) => {
                 const progress = Math.floor((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
                 setProgress(progress);
@@ -106,102 +105,35 @@ const Video = () => {
                     setIsDisable(false);
                 });
             }
-        );
+        ); */
         /* const fileReader = new FileReader();
         fileReader.onload = ()=>{
             console.log("resu",fileReader.result);
         }
         const blobFile = new Blob */
-        const blob = new Blob([file])
-        const file1 = new File([blob],"file.jpg")
-        console.log(blob);
-        console.log(file1);
-        reader(file,(err:any, res:any) => {
-            console.log(dataURLtoFile(res,file.name)); // Base64 `data:image/...` String result.
+        reader(file, (err: any, res: any) => {
+            console.log(dataURLtoFile(res, file.name)); // Base64 `data:image/...` String result.
             setBase64File(res);
-
-          })
+            setIsDisable(false);
+        })
     }
-    function dataURLtoFile(dataurl:any, filename:any) {
+    function dataURLtoFile(dataurl: any, filename: any) {
         var arr = dataurl.split(','),
             mime = arr[0].match(/:(.*?);/)[1],
-            bstr = atob(arr[arr.length - 1]), 
-            n = bstr.length, 
+            bstr = atob(arr[arr.length - 1]),
+            n = bstr.length,
             u8arr = new Uint8Array(n);
-        while(n--){
+        while (n--) {
             u8arr[n] = bstr.charCodeAt(n);
         }
-        return new File([u8arr], filename, {type:mime});
+        return new File([u8arr], filename, { type: mime });
     }
-    function reader(file:any, callback:any) {
+    function reader(file: any, callback: any) {
         const fr = new FileReader();
         fr.onload = () => callback(null, fr.result);
         fr.onerror = (err) => callback(err);
         fr.readAsDataURL(file);
-      }
-    /*  const submit = async () => {
-         const auth = new google.auth.GoogleAuth({
-             credentials: {
-                 client_email: process.env.NEXT_PUBLIC_CLIENT_EMAIL_ID,
-                 client_id: process.env.NEXT_PUBLIC_CLIENT_ID_SHEET,
-                 private_key: process.env.NEXT_PUBLIC_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-             },
-             scopes: [
-                 'https://www.googleapis.com/auth/drive',
-                 'https://www.googleapis.com/auth/drive.file',
-                 'https://www.googleapis.com/auth/spreadsheets',
-             ],
-         });
-     
-         const sheets = google.sheets({
-             auth,
-             version: 'v4',
-         });
-         const {name,email,linkUpload,linkYoutube,message}=req.body
-         const response = sheets.spreadsheets.values.append({
-             spreadsheetId: "1FGkk4LScYui8RuiGCgGMt-GREZuG9SDgKwhwyXaaFXc",
-             range: 'Page1!A2:E2',
-             valueInputOption: 'RAW',
-             requestBody: {
-                 values: [[name||"",email||"",linkUpload||"",linkYoutube||"",message||""]],
-                 
-             },
-         });
-     } */
-    /* const submit = async () => {
-
-        if (name) {
-            if (email) {
-                if(linkUpload || linkYoutube){
-                    if(rule1 && rule2){
-                        axios.post("https://data-blog-zkom.onrender.com/video",{
-                            id:randomStr(5),
-                            name:name,
-                            email:email,
-                            urlVideo:linkUpload,
-                            urlYoutube:linkYoutube,
-                            message:message
-                        }).then((res)=>{
-                            if(res.status == 201){
-                                showToast("success", "You have successfully uploaded the video!")
-                            }else {
-                                showToast("failed", "Your video upload failed!")
-                            }
-                        })
-                    }else {
-                        showToast("warning", "You need to accept the rules!")
-                    }
-                }else {
-                    showToast("warning", "You need to upload a video!")
-                }
-            } else {
-                showToast("warning", "You need to enter your email!")
-            }
-        } else {
-            showToast("warning", "You need to enter your full name!")
-        }
-
-    } */
+    }
     useEffect(() => {
         if (file == null) return;
         uploadVideo(file);
@@ -210,42 +142,44 @@ const Video = () => {
         register,
         handleSubmit,
         reset,
+        getValues,
         formState: { errors }, // catch error messages
     } = useForm();
     function submitHandler(data: any) {
         if (rule1 && rule2) {
-            if (linkUpload == "" && linkYoutube == "") {
+            if (!file && linkYoutube == "") {
                 showToast("warning", "You need to upload a video!")
             } else {
-                if (!code) {
-                    axios.get('http://localhost:3001/').then(res => {
-                        if (res.status == 200) {
-                            setIsLogin(true);
-                            //showToast("success", "You have successfully uploaded the video!")
-                            router.push(res.data.url);
-                            console.log(res);
-                            reset();
-                        } else {
-                            showToast("failed", "Your video upload failed!")
-                        }
-                    });
-                } else {
-
-                
-                    let form = new FormData();
-                    form.append('code',String(code));
-                    form.append('file',base64File);
-                    form.append('fileName',file.name);
-                    form.append('message',name+" "+email+" "+message);
-                    axios.post('http://localhost:3001/token',
-                        form,{
-                            headers:{
-                                "Content-Type":'application/x-www-form-urlencoded',
-                            }
-                        }
-                    )
+                setIsLoadingFileComplete(true);
+                let form = new FormData();
+                form.append('file', base64File);
+                form.append('fileName', file.name);
+                form.append('message', name + " " + email + " " + message);
+                axios.post('http://localhost:3001/token',
+                    form, {
+                    headers: {
+                        "Content-Type": 'application/x-www-form-urlencoded',
+                    }
                 }
-
+                ).then(res => {
+                    if (res.status == 200) {
+                        axios.post("http://localhost:3001/write", {
+                            name: getValues("name"),
+                            email: getValues("email"),
+                            linkUpload: `https://drive.google.com/file/d/${res.data.idVideo}/view`,
+                            linkYoutube: getValues("linkYoutube"),
+                            message: getValues("message")
+                        }).then((res) => {
+                            if (res.status == 200) {
+                                showToast("success", "You have successfully uploaded the video!")
+                            } else {
+                                showToast("failed", "Your video upload failed!")
+                            }
+                            setIsLoadingFileComplete(false)
+                        })
+                        
+                    }
+                })
             }
         } else {
             showToast("warning", "You need to accept the rules!")
@@ -277,7 +211,7 @@ const Video = () => {
                 <div className="form-submit">
                     <form className="form" onSubmit={handleSubmit(submitHandler)}>
                         <div className="input">
-                            <label htmlFor="name">Name</label>
+                            <label htmlFor="name">Name (*)</label>
                             <input type="text" id="name"
                                 {...register('name', { required: true })}
                                 aria-invalid={errors.name ? "true" : "false"}
@@ -285,7 +219,7 @@ const Video = () => {
                             {errors.name?.type === 'required' && <p className='error' role="alert">*Please enter your name</p>}
                         </div>
                         <div className="input">
-                            <label htmlFor="email">Email</label>
+                            <label htmlFor="email">Email (*)</label>
                             <input type="text" id="email"
                                 {...register('email', { required: true })}
                             />
@@ -297,7 +231,7 @@ const Video = () => {
                                 <div className="input-file">
                                     <span className='icon-loading'>
                                         {!isLoadingFileIcon ? <IUpload width={50} height={50}></IUpload> :
-                                            <Progress className='progress' size={50} type="circle" percent={progress} />}
+                                            <ITick width={50} height={50}/>}
                                         {file ? <p>{file.name}</p> : <p>Choose your video file</p>}
                                     </span>
                                     <input id="position" type="file" placeholder="Vị trí bạn quan tâm"
@@ -328,7 +262,9 @@ const Video = () => {
                             <textarea id="message" rows={4} cols={20}
                                 {...register('message')} />
                         </div>
-                        <button disabled={isDisable} type="submit" className="btn rounded-0 btn-primary tm-btn-small">submit</button>
+                        <button disabled={isDisable} type="submit" className="btn rounded-0 btn-primary tm-btn-small">
+                            {isLoadingFileComplete ? <span><Loading1></Loading1></span> : "submit"}
+                            </button>
                     </form>
                     {/* <button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button> */}
                 </div>

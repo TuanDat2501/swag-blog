@@ -124,7 +124,8 @@ const Landing = () => {
                 name: "We luck",
                 api_key: "AIzaSyBnTJYeJFCcwmKiC8dDWPce6WuiTKA2pR4",
                 channelId: "UC3dW5i2TdXzcXBUEYpl8pgQ",
-                blogId: "2336283564104274815"
+                blogId: "2336283564104274815",
+                items:[]
             }
         }
         waitUntil(1.2, 200, 1);
@@ -147,7 +148,10 @@ const Landing = () => {
         }
         console.log(data_channel);
     }, [data_channel]);
-
+    /* const slowVideo = ()=>{
+        const video = document.querySelector('#tm-video');
+        video.
+    } */
     return (
         <>
             <div className="main-index">
@@ -181,7 +185,7 @@ const Landing = () => {
                 </div>
                 <div id="tm-video-container">
                     <video autoPlay muted loop id="tm-video">
-                        <source src="https://firebasestorage.googleapis.com/v0/b/swag-video-fcf45.appspot.com/o/img%2Fwheat-field.mp4?alt=media&token=70c271a1-af52-473d-8916-5f8ff61dac5d" type="video/mp4" />
+                        <source  src="https://firebasestorage.googleapis.com/v0/b/swag-video-fcf45.appspot.com/o/M%E1%BB%9F%20r%E1%BB%99ng.mp4?alt=media&token=194256c8-3303-4fd3-b57a-fbecafcbc420" type="video/mp4" />
                     </video>
                 </div>
             </div>
