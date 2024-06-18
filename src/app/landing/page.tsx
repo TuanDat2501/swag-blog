@@ -186,7 +186,7 @@ const Landing = () => {
                 <div id="tm-video-container">
                     <div className="overlay"></div>
                     <video autoPlay muted loop id="tm-video">
-                        <source  src="./video/video.mp4" type="video/mp4" />
+                        <source  src="./video/video.mp4" type="video/mp4"/>
                     </video>
                 </div>
             </div>

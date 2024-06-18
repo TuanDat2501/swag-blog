@@ -151,35 +151,54 @@ const Video = () => {
                 showToast("warning", "You need to upload a video!")
             } else {
                 setIsLoadingFileComplete(true);
-                let form = new FormData();
-                form.append('file', base64File);
-                form.append('fileName', file.name);
-                form.append('message', name + " " + email + " " + message);
-                axios.post('http://localhost:3001/token',
-                    form, {
-                    headers: {
-                        "Content-Type": 'application/x-www-form-urlencoded',
+                if(linkYoutube !== "" && !file){
+                    axios.post("http://localhost:3001/write", {
+                        name: getValues("name"),
+                        email: getValues("email"),
+                        linkUpload: "",
+                        linkYoutube: getValues("linkYoutube"),
+                        message: getValues("message")
+                    }).then((res) => {
+                        if (res.status == 200) {
+                            showToast("success", "You have successfully uploaded the video!")
+                        } else {
+                            showToast("failed", "Your video upload failed!")
+                        }
+                        setIsLoadingFileComplete(false)
+                    })
+                }else{
+                    let form = new FormData();
+                    form.append('file', base64File);
+                    form.append('fileName', file.name);
+                    form.append('message', name + " " + email + " " + message);
+                    axios.post('http://localhost:3001/token',
+                        form, {
+                        headers: {
+                            "Content-Type": 'application/x-www-form-urlencoded',
+                        }
                     }
+                    ).then(res => {
+                        if (res.status == 200) {
+                            axios.post("http://localhost:3001/write", {
+                                name: getValues("name"),
+                                email: getValues("email"),
+                                linkUpload: `https://drive.google.com/file/d/${res.data.idVideo}/view`,
+                                linkYoutube: getValues("linkYoutube"),
+                                message: getValues("message")
+                            }).then((res) => {
+                                if (res.status == 200) {
+                                    showToast("success", "You have successfully uploaded the video!")
+                                } else {
+                                    showToast("failed", "Your video upload failed!")
+                                }
+                                setIsLoadingFileComplete(false)
+                            })
+                            
+                        }
+                    })
                 }
-                ).then(res => {
-                    if (res.status == 200) {
-                        axios.post("http://localhost:3001/write", {
-                            name: getValues("name"),
-                            email: getValues("email"),
-                            linkUpload: `https://drive.google.com/file/d/${res.data.idVideo}/view`,
-                            linkYoutube: getValues("linkYoutube"),
-                            message: getValues("message")
-                        }).then((res) => {
-                            if (res.status == 200) {
-                                showToast("success", "You have successfully uploaded the video!")
-                            } else {
-                                showToast("failed", "Your video upload failed!")
-                            }
-                            setIsLoadingFileComplete(false)
-                        })
-                        
-                    }
-                })
+                
+               
             }
         } else {
             showToast("warning", "You need to accept the rules!")
