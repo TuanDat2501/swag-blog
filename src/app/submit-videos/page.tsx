@@ -151,7 +151,7 @@ const Video = () => {
                 showToast("warning", "You need to upload a video!")
             } else {
                 setIsLoadingFileComplete(true);
-                if(linkYoutube !== "" && !file){
+                if (linkYoutube !== "" && !file) {
                     axios.post("http://localhost:3001/write", {
                         name: getValues("name"),
                         email: getValues("email"),
@@ -165,8 +165,11 @@ const Video = () => {
                             showToast("failed", "Your video upload failed!")
                         }
                         setIsLoadingFileComplete(false)
+                        reset();
+                        setFile(null);
+                        setIsLoadingFileIcon(false);
                     })
-                }else{
+                } else {
                     let form = new FormData();
                     form.append('file', base64File);
                     form.append('fileName', file.name);
@@ -192,13 +195,16 @@ const Video = () => {
                                     showToast("failed", "Your video upload failed!")
                                 }
                                 setIsLoadingFileComplete(false)
+                                reset();
+                                setFile(null);
+                                setIsLoadingFileIcon(false);
                             })
-                            
+
                         }
                     })
                 }
-                
-               
+
+
             }
         } else {
             showToast("warning", "You need to accept the rules!")
@@ -250,7 +256,7 @@ const Video = () => {
                                 <div className="input-file">
                                     <span className='icon-loading'>
                                         {!isLoadingFileIcon ? <IUpload width={50} height={50}></IUpload> :
-                                            <ITick width={50} height={50}/>}
+                                            <ITick width={50} height={50} />}
                                         {file ? <p>{file.name}</p> : <p>Choose your video file</p>}
                                     </span>
                                     <input id="position" type="file" placeholder="Vị trí bạn quan tâm"
@@ -281,9 +287,9 @@ const Video = () => {
                             <textarea id="message" rows={4} cols={20}
                                 {...register('message')} />
                         </div>
-                        <button disabled={isDisable} type="submit" className="btn rounded-0 btn-primary tm-btn-small">
+                        <button disabled={isLoadingFileComplete} type="submit" className="btn rounded-0 btn-primary tm-btn-small">
                             {isLoadingFileComplete ? <span><Loading1></Loading1></span> : "submit"}
-                            </button>
+                        </button>
                     </form>
                     {/* <button className="btn rounded-0 btn-primary tm-btn-small" onClick={submit}>submit</button> */}
                 </div>
