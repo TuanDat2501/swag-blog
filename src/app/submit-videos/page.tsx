@@ -152,7 +152,7 @@ const Video = () => {
             } else {
                 setIsLoadingFileComplete(true);
                 if (linkYoutube !== "" && !file) {
-                    axios.post("http://localhost:3001/write", {
+                    axios.post("https://swag-ilaj.onrender.com/write", {
                         name: getValues("name"),
                         email: getValues("email"),
                         linkUpload: "",
@@ -174,7 +174,7 @@ const Video = () => {
                     form.append('file', base64File);
                     form.append('fileName', file.name);
                     form.append('message', name + " " + email + " " + message);
-                    axios.post('http://localhost:3001/token',
+                    axios.post('https://swag-ilaj.onrender.com/upload',
                         form, {
                         headers: {
                             "Content-Type": 'application/x-www-form-urlencoded',
@@ -182,7 +182,7 @@ const Video = () => {
                     }
                     ).then(res => {
                         if (res.status == 200) {
-                            axios.post("http://localhost:3001/write", {
+                            axios.post("https://swag-ilaj.onrender.com/write", {
                                 name: getValues("name"),
                                 email: getValues("email"),
                                 linkUpload: `https://drive.google.com/file/d/${res.data.idVideo}/view`,
@@ -213,6 +213,7 @@ const Video = () => {
     useEffect(() => {
         return () => {
             setLinkUpload("");
+          
         }
     }, [])
     return (
