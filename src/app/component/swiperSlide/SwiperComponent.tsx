@@ -11,7 +11,7 @@ import { DataChannel } from '@/app/const/interface';
 import Image from 'next/image';
 import IPlay from '@/icon/IPlay';
 import { useMediaQuery } from 'usehooks-ts';
-import { useRouter } from 'next/router';
+import { useRouter } from "next/navigation";
 interface Props {
 
     data: DataChannel
