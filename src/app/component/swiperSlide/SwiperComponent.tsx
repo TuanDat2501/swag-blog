@@ -11,12 +11,17 @@ import { DataChannel } from '@/app/const/interface';
 import Image from 'next/image';
 import IPlay from '@/icon/IPlay';
 import { useMediaQuery } from 'usehooks-ts';
+import { useRouter } from 'next/router';
 interface Props {
 
     data: DataChannel
 }
 const SwiperComponent = ({ data }: Props) => {
     const isMobile = useMediaQuery('(max-width:430px)')
+    const router = useRouter()
+    const clickVideo = (videoId: string) => {
+        router.push('/video?videoId=' + videoId);
+    }
     return (
         <div className="swipper-container">
             <h1>{data.name}</h1>
@@ -39,7 +44,7 @@ const SwiperComponent = ({ data }: Props) => {
                                 alt="Image"
                                 className="img-fluid tm-catalog-item-img" />
                             <a className="position-absolute tm-img-overlay"
-                                // onClick={() => clickVideo(video.videoId)}
+                                onClick={() => clickVideo(video.videoId)}
                                 
                                 >
                                 <IPlay></IPlay>
